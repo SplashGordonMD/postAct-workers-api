@@ -20,4 +20,10 @@ class WorkersController < ApplicationController
   @worker.save
   render 'show.json.jbuilder'
  end
-end
+
+ def destroy 
+  @worker = Worker.find_by(id: params[:id])
+  @worker.destroy
+  render 'json: {'
+ end
+end 
