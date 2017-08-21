@@ -1,10 +1,21 @@
 class WorkersController < ApplicationController
-
  def index
   @workers = Worker.all
   render 'index.json.jbuilder'
  end
-   
+
+ def create
+  @worker = Worker.new(
+    first_name: params[:first_name],
+    last_name: params[:last_name],
+    birthdate: params[:birthdate],
+    email: params[:email],
+    ssn: params[:ssn]
+  )
+  @employee.save
+ end 
+
+
  def show
   @worker = Worker.find_by(id: params[:id])
   render 'show.json.jbuilder'
