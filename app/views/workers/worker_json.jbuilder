@@ -3,4 +3,4 @@ json.id @worker.id
  json.last_name @worker.last_name
  json.birthdate @worker.birthdate
  json.emial @worker.email
- json.ssn @worker.ssn
+ 

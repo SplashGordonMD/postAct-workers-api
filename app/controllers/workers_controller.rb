@@ -1,40 +1,69 @@
 class WorkersController < ApplicationController
+  HEADERS = { 'Authorization' => "Token token=#{ENV['API_KEY']}", 'X-User-Email' => ENV['API_EMAIL'] }
+ 
  def index
-  @workers = Worker.all
-  render 'index.json.jbuilder'
+  # @workers = Worker.all
+  @workers = Unirest.get(
+   "#{ENV['API_BASE_URL']}/workers",
+   headers: HEADERS
+  ).body
+  render 'index.html.erb'
  end
 
+ def new
+    render 'new.html.erb'
+ end   
+
  def create
-  @worker = Worker.new(
-    first_name: params[:first_name],
-    last_name: params[:last_name],
-    birthdate: params[:birthdate],
-    email: params[:email],
-    ssn: params[:ssn]
-  )
-  @employee.save
+  @worker = Unirest.post(
+    "#{ENV['API_BASE_URL']}/workers",
+   headers: HEADERS,
+   parameters: {
+     first_name: params[:first_name],
+     last_name: params[:last_name],
+     birthdate: params[:birthdate],
+     email: params[:email],
+     }
+    ).body
+    redirect_to "/workers/#{@worker[:id]}"
  end 
 
 
  def show
-  @worker = Worker.find_by(id: params[:id])
-  render 'show.json.jbuilder'
+  @worker = Unirest.get(
+    "#{ENV['API_BASE_URL']}/workers/#{params[:id]}",
+    headers: HEADERS,
+  ).body
+  render 'show.html.erb'
  end
 
+ def edit
+  @worker = Unirest.get(
+     "#{ENV['API_BASE_URL']}/workers/#{params[:id]}",
+     headers: HEADERS,
+    ).body
+  render 'edit.html.erb'
+ end 
+
  def update
-  @worker = Worker.find_by(id: params[:id])
-  @worker.first_name = params[:first_name] || @worker.first_name
-  @worker.last_name = params[:last_name] || @worker.last_name
-  @worker.birthdate = params[:birthdate] || @worker.birthdate
-  @worker.email = params[:email] || @worker.email
-  @worker.ssn = params[:ssn] || @worker.ssn
-  @worker.save
-  render 'show.json.jbuilder'
+  @worker = Unirest.get(
+    "#{ENV['API_BASE_URL']}/workers/#{params[:id]}",
+    headers: HEADERS,
+    parameters: {
+       first_name: params[:first_name],
+       last_name: params[:last_name],
+       birthdate: params[:birthdate],
+       email: params[:email]
+    }
+  ).body  
+  redirect_to "/workers/#{@worker[:id]}"  
  end
 
  def destroy 
-  @worker = Worker.find_by(id: params[:id])
-  @worker.destroy
-  render 'json: {'
+  message = Unirest.delete(
+     "#{ENV['API_BASE_URL']}/workers/#{params[:id]}",
+     headers: HEADERS
+   ).body
+   redirect_to "/workers"
  end
 end 
